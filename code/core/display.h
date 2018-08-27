@@ -1,0 +1,79 @@
+#pragma once
+#if !defined(_DISPLAY_H_)
+#define _DISPLAY_H_
+
+enum DisplaySwapInterval
+{
+    IMMEDIATE = 0,
+    VSYNC = 1,
+    
+    MAX = 255,
+};
+
+static const char* WINDOW_NAME_COMMAND = "-WindowName=";
+static const char* WINDOW_SIZE_COMMAND = "-WindowSize=";
+
+#define DEFAULT_WINDOW_NAME "Indie Game"
+#define DEFAULT_DISPLAY_WIDTH 1280
+#define DEFAULT_DISPLAY_HEIGHT 720
+
+static SDL_Window* Window;
+static SDL_GLContext GLContext;
+
+static int32 WindowWidth = 0;
+static int32 WindowHeight = 0;
+
+static char* WindowName;
+
+bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
+{          
+    for(int ArgIndex = 0; ArgIndex < ArgumentCount; ++ArgIndex)
+    {
+        int32 CommandLineRemainingLength = 0;
+        if(strstr(ArgumentValues[ArgIndex], WINDOW_NAME_COMMAND) > 0)
+        {
+            const int32 WindowNameArgumentLength = strlen(WINDOW_NAME_COMMAND);
+            
+            CommandLineRemainingLength = strlen(ArgumentValues[ArgIndex]) - WindowNameArgumentLength;
+            WindowName = (char*)PlatformAlloc(CommandLineRemainingLength);
+            memcpy(WindowName, &ArgumentValues[ArgIndex][WindowNameArgumentLength], CommandLineRemainingLength);
+        }
+        
+        if(strstr(ArgumentValues[ArgIndex], WINDOW_SIZE_COMMAND) > 0)
+        {
+            const int32 WindowSizeArgumentLength = strlen(WINDOW_SIZE_COMMAND);
+            
+            CommandLineRemainingLength = strlen(ArgumentValues[ArgIndex]) - WindowSizeArgumentLength;
+            
+            IString::IString Sizes = IString::NewString(&ArgumentValues[ArgIndex][WindowSizeArgumentLength]);
+            Sizes = IString::ReplaceSubstring(Sizes, ",", " ");
+        }
+    }
+    
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    
+    Window = SDL_CreateWindow(WindowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+                              WindowWidth, WindowHeight, SDL_WINDOW_OPENGL);
+    if(Window)
+    {
+        GLContext = SDL_GL_CreateContext(Window);
+        if(GLContext)
+        {
+            SDL_GL_SetSwapInterval(DisplaySwapInterval::VSYNC);
+            {
+                return true;
+            }            
+        }
+    }           
+    return false;
+}
+
+void DisplayClose()
+{
+    SDL_DestroyWindow(Window);
+    SDL_Quit();
+}
+
+#endif
