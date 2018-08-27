@@ -119,14 +119,20 @@ namespace IString
                 
                 RangesIndex++;
                 
-                bool bFoundWhiteSpace = bEndSearch;
-                while(!bFoundWhiteSpace)
+                bool bFoundWastedSpace = bEndSearch;
+                while(!bFoundWastedSpace)
                 {
-                    if(*SourceBuffer++ == ' ')
+                    // Cleanup any whitespace or deliminators from the result(s)
+                    if(*SourceBuffer == ' ' || *SourceBuffer == Deliminator)
                     {
-                        bFoundWhiteSpace = true;
+                        *SourceBuffer++;
+                        SourceIndex++;
                     }
-                    SourceIndex++;
+                    else
+                    {
+                        bFoundWastedSpace = true;
+                        break;
+                    }
                 }
                 
                 LastOccuranceIndex = SourceIndex;
@@ -270,20 +276,32 @@ namespace IString
             Test::Compare((char*)O[1]->Buffer, "Testing");
             Test::Compare((char*)O[2]->Buffer, "By");
             Test::Compare((char*)O[3]->Buffer, "Space");
+                        
+            Test::StartNewTest("String Split Comma With No Spaces");
+            IString P = NewString("Testing,Split,By,Comma,With,No,Spaces");
+            IString** Q = Split(P, ',');
+            
+            Test::Compare((char*)Q[0]->Buffer, "Testing");
+            Test::Compare((char*)Q[1]->Buffer, "Split");
+            Test::Compare((char*)Q[2]->Buffer, "By");
+            Test::Compare((char*)Q[3]->Buffer, "Comma");            
+            Test::Compare((char*)Q[4]->Buffer, "With");            
+            Test::Compare((char*)Q[5]->Buffer, "No");            
+            Test::Compare((char*)Q[6]->Buffer, "Spaces");
             
             // Remove Leading spaces
             Test::StartNewTest("Remove Leading Spaces");
-            IString P = NewString("      ...Ahhhhh!");
-            RemoveLeadingSpaces(P);
+            IString R = NewString("      ...Ahhhhh!");
+            RemoveLeadingSpaces(R);
             
-            Test::Compare((char*)P.Buffer, "...Ahhhhh!");
+            Test::Compare((char*)R.Buffer, "...Ahhhhh!");
             
             // Remove trailing spaces
             Test::StartNewTest("Remove trailing spaces");
-            IString Q = NewString("It feels like time continues on and on and...            ");
-            RemoveTrailingSpaces(Q);
+            IString S = NewString("It feels like time continues on and on and...            ");
+            RemoveTrailingSpaces(S);
             
-            Test::Compare((char*)Q.Buffer, "It feels like time continues on and on and...");
+            Test::Compare((char*)S.Buffer, "It feels like time continues on and on and...");
         }
     }
 #endif

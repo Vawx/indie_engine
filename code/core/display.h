@@ -46,7 +46,12 @@ bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
             CommandLineRemainingLength = strlen(ArgumentValues[ArgIndex]) - WindowSizeArgumentLength;
             
             IString::IString Sizes = IString::NewString(&ArgumentValues[ArgIndex][WindowSizeArgumentLength]);
-            Sizes = IString::ReplaceSubstring(Sizes, ",", " ");
+            IString::IString** SplitSizes = IString::Split(Sizes, ',');
+            
+            WindowWidth = IString::ToInt(*SplitSizes[0]);
+            WindowHeight = IString::ToInt(*SplitSizes[1]);
+            
+            Assert(WindowWidth > 0 && WindowHeight > 0);
         }
     }
     
