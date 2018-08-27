@@ -20,38 +20,30 @@ static const char* WINDOW_SIZE_COMMAND = "-WindowSize=";
 static SDL_Window* Window;
 static SDL_GLContext GLContext;
 
-static int32 WindowWidth = 0;
-static int32 WindowHeight = 0;
+static Math::iV2 WindowDimensions;
 
-static char* WindowName;
+static IString::IString WindowName;
 
 bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
 {          
     for(int ArgIndex = 0; ArgIndex < ArgumentCount; ++ArgIndex)
     {
-        int32 CommandLineRemainingLength = 0;
         if(strstr(ArgumentValues[ArgIndex], WINDOW_NAME_COMMAND) > 0)
         {
-            const int32 WindowNameArgumentLength = strlen(WINDOW_NAME_COMMAND);
-            
-            CommandLineRemainingLength = strlen(ArgumentValues[ArgIndex]) - WindowNameArgumentLength;
-            WindowName = (char*)PlatformAlloc(CommandLineRemainingLength);
-            memcpy(WindowName, &ArgumentValues[ArgIndex][WindowNameArgumentLength], CommandLineRemainingLength);
+            const int32 WindowNameArgumentLength = strlen(WINDOW_NAME_COMMAND);            
+            WindowName = IString::NewString(&ArgumentValues[ArgIndex][WindowNameArgumentLength]);
         }
         
         if(strstr(ArgumentValues[ArgIndex], WINDOW_SIZE_COMMAND) > 0)
         {
             const int32 WindowSizeArgumentLength = strlen(WINDOW_SIZE_COMMAND);
-            
-            CommandLineRemainingLength = strlen(ArgumentValues[ArgIndex]) - WindowSizeArgumentLength;
-            
             IString::IString Sizes = IString::NewString(&ArgumentValues[ArgIndex][WindowSizeArgumentLength]);
             IString::IString** SplitSizes = IString::Split(Sizes, ',');
             
-            WindowWidth = IString::ToInt(*SplitSizes[0]);
-            WindowHeight = IString::ToInt(*SplitSizes[1]);
+            WindowDimensions.Width = IString::ToInt(*SplitSizes[0]);
+            WindowDimensions.Height = IString::ToInt(*SplitSizes[1]);
             
-            Assert(WindowWidth > 0 && WindowHeight > 0);
+            Assert(WindowDimensions.Width > 0 && WindowDimensions.Height > 0);
         }
     }
     
@@ -59,8 +51,8 @@ bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     
-    Window = SDL_CreateWindow(WindowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-                              WindowWidth, WindowHeight, SDL_WINDOW_OPENGL);
+    Window = SDL_CreateWindow(WindowName.Buffer, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+                              WindowDimensions.Width, WindowDimensions.Height, SDL_WINDOW_OPENGL);
     if(Window)
     {
         GLContext = SDL_GL_CreateContext(Window);

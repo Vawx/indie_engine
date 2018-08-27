@@ -18,8 +18,12 @@ namespace Math
         {
             int Last, Next;
         };
+        struct 
+        {
+            int Width, Height;
+        };
     };
-    
+    int Elements[2];
 };
 
 #endif
