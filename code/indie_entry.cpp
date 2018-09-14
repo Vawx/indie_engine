@@ -2,10 +2,9 @@
 
 int main(int ArgumentCount, char* ArgumentValues[])
 {
-    IString::IString_Test::RunTests();
     if(DisplayInit(ArgumentCount, ArgumentValues))
     {
-        
+        RenderLoop::Render();
     }
     return 1;
 }

@@ -2,6 +2,8 @@
 #if !defined(_CONSOLE_H_)
 #define _CONSOLE_H_
 
+#include "renderable.h"
+
 namespace Console
 {
 #if defined(_WIN32)
@@ -32,5 +34,7 @@ namespace Console
         SetConsoleTextAttribute(GetConsoleHandle(), Color);
     }    
 #endif
+
 };
+
 #endif

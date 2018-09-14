@@ -49,8 +49,16 @@ typedef double real64;
 #define PlatformFree(Buffer, Size) VirtualFree((LPVOID)Buffer, Size, MEM_RELEASE);
 #endif
 
+#if RUN_INDIE_TESTS
+#include "test.h"
+#endif
+
 #include "core/math.h"
 #include "core/istring.h"
+#include "core/input.h"
+#include "core/timing.h"
+
 #include "display.h"
+#include "core/render_loop.h"
 
 #endif

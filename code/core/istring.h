@@ -4,7 +4,7 @@
 
 #include <cstdlib>
 
-namespace IString
+namespace String
 {
 #define EOL(C) (C == '\n' || C == '\0')
 #define MAX_STRING_LENGTH MAX_PACKET_SIZE
@@ -202,8 +202,6 @@ namespace IString
         memcpy(Source.Buffer, &Buffer[0], NewLength);
     }
     
-#if RUN_INDIE_TESTS
-#include "test.h"
     namespace IString_Test
     {
         void RunTests()
@@ -304,6 +302,5 @@ namespace IString
             Test::Compare((char*)S.Buffer, "It feels like time continues on and on and...");
         }
     }
-#endif
 };
 #endif

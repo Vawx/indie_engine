@@ -22,7 +22,7 @@ static SDL_GLContext GLContext;
 
 static Math::iV2 WindowDimensions;
 
-static IString::IString WindowName;
+static String::IString WindowName;
 
 bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
 {          
@@ -31,17 +31,17 @@ bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
         if(strstr(ArgumentValues[ArgIndex], WINDOW_NAME_COMMAND) > 0)
         {
             const int32 WindowNameArgumentLength = strlen(WINDOW_NAME_COMMAND);            
-            WindowName = IString::NewString(&ArgumentValues[ArgIndex][WindowNameArgumentLength]);
+            WindowName = String::NewString(&ArgumentValues[ArgIndex][WindowNameArgumentLength]);
         }
         
         if(strstr(ArgumentValues[ArgIndex], WINDOW_SIZE_COMMAND) > 0)
         {
             const int32 WindowSizeArgumentLength = strlen(WINDOW_SIZE_COMMAND);
-            IString::IString Sizes = IString::NewString(&ArgumentValues[ArgIndex][WindowSizeArgumentLength]);
-            IString::IString** SplitSizes = IString::Split(Sizes, ',');
+            String::IString Sizes = String::NewString(&ArgumentValues[ArgIndex][WindowSizeArgumentLength]);
+            String::IString** SplitSizes = String::Split(Sizes, ',');
             
-            WindowDimensions.Width = IString::ToInt(*SplitSizes[0]);
-            WindowDimensions.Height = IString::ToInt(*SplitSizes[1]);
+            WindowDimensions.Width = String::ToInt(*SplitSizes[0]);
+            WindowDimensions.Height = String::ToInt(*SplitSizes[1]);
             
             Assert(WindowDimensions.Width > 0 && WindowDimensions.Height > 0);
         }
@@ -65,6 +65,17 @@ bool DisplayInit(int ArgumentCount, char* ArgumentValues[])
         }
     }           
     return false;
+}
+
+void DisplayStartFrame()
+{
+    glClearColor(0.25f, 0.25f, 0.5f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void DisplayEndFrame()
+{
+    SDL_GL_SwapWindow(Window);
 }
 
 void DisplayClose()
